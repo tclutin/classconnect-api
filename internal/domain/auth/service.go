@@ -69,5 +69,5 @@ func (s *Service) SignUp(ctx context.Context, dto SignupDTO) (string, error) {
 }
 
 func (s *Service) GenerateToken(username string) (string, error) {
-	return "пошёл нахуй", nil
+	return "", nil
 }
