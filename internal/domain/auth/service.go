@@ -73,12 +73,13 @@ func (s *Service) SignUp(ctx context.Context, dto SignupDTO) (string, error) {
 }
 
 func (s *Service) GenerateToken(username string, email string) (string, error) {
-	token := jwt.New(jwt.SigningMethodHS256)
-	claims := token.Claims.(jwt.MapClaims)
-	claims["exp"] = time.Now().Add(1 * time.Minute)
-	claims["authorized"] = true
-	claims["user"] = username
-	claims["email"] = email
+	payload := jwt.MapClaims{
+		"exp":      time.Now().Add(1 * time.Minute).Unix(),
+		"username": username,
+		"email":    email,
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, payload)
 
 	tokenString, err := token.SignedString([]byte(s.config.JWT.Secret))
 	if err != nil {
