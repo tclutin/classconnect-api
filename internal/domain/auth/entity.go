@@ -6,8 +6,9 @@ import (
 )
 
 var (
-	ErrAlreadyExist = errors.New("user already exist")
-	ErrNotFound     = errors.New("user not found")
+	ErrAlreadyExist     = errors.New("user already exist")
+	ErrNotFound         = errors.New("user not found")
+	ErrPasswordNotMatch = errors.New("password not match")
 )
 
 type User struct {
@@ -15,5 +16,6 @@ type User struct {
 	Username     string
 	Email        string
 	PasswordHash string
+	IsBanned     bool
 	CreatedAt    time.Time
 }

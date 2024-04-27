@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-const layer = "handler.auth."
+const layer_auth_handler = "handler.auth."
 
 type Service interface {
 	LogIn(ctx context.Context, dto auth.LoginDTO) (string, error)
@@ -42,7 +42,7 @@ func (h *Handler) LogIn(c *gin.Context) {
 		return
 	}
 
-	h.logger.Info(layer+"LogIn", slog.String("username", request.Username))
+	h.logger.Info(layer_auth_handler+"LogIn", slog.String("username", request.Username))
 
 	token, err := h.service.LogIn(context.Background(), request.ToDTO())
 	if err != nil {
@@ -60,7 +60,7 @@ func (h *Handler) SignUp(c *gin.Context) {
 		return
 	}
 
-	h.logger.Info(layer+"SignUp", slog.String("username", request.Username))
+	h.logger.Info(layer_auth_handler+"SignUp", slog.String("username", request.Username))
 
 	token, err := h.service.SignUp(context.Background(), request.ToDTO())
 	if err != nil {

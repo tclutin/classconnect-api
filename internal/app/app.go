@@ -4,6 +4,8 @@ import (
 	"classconnect-api/internal/config"
 	"classconnect-api/internal/domain"
 	httpLayer "classconnect-api/internal/handler/http"
+	"classconnect-api/internal/repository/postgres"
+	"classconnect-api/pkg/client/postgresql"
 	"classconnect-api/pkg/logging"
 	"context"
 	"errors"
@@ -27,8 +29,14 @@ func New() *App {
 	//Init the slog
 	logger := logging.InitSlog(cfg.Environment)
 
+	//Init postgres client
+	client := postgresql.NewClient(context.Background(), "postgresql://postgres:root@localhost:5432/postgres")
+
+	//Init repositories
+	repositories := postgres.NewRepositories(client, logger)
+
 	//Init manager of serviсes
-	services := domain.NewServices()
+	services := domain.NewServices(repositories)
 
 	//Init the router
 	router := httpLayer.NewRouter(services, cfg, logger)

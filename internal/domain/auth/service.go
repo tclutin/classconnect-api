@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"classconnect-api/pkg/hash"
 	"context"
 	"time"
 )
@@ -14,16 +15,23 @@ type Service struct {
 	repository Repository
 }
 
-func NewService() *Service {
-	return &Service{}
+func NewService(repository Repository) *Service {
+	return &Service{
+		repository: repository,
+	}
 }
 
 func (s *Service) LogIn(ctx context.Context, dto LoginDTO) (string, error) {
-	if _, err := s.repository.GetUserByUsername(ctx, dto.Username); err != nil {
+	user, err := s.repository.GetUserByUsername(ctx, dto.Username)
+	if err != nil {
 		return "", ErrNotFound
 	}
 
-	token, err := s.GenerateToken(dto.Username)
+	if user.PasswordHash != hash.GenerateHash(dto.Password) {
+		return "", ErrPasswordNotMatch
+	}
+
+	token, err := s.GenerateToken(user.Username)
 	if err != nil {
 		return "", err
 	}
@@ -32,14 +40,14 @@ func (s *Service) LogIn(ctx context.Context, dto LoginDTO) (string, error) {
 }
 
 func (s *Service) SignUp(ctx context.Context, dto SignupDTO) (string, error) {
-	if _, err := s.repository.GetUserByUsername(ctx, dto.Username); err != nil {
+	if _, err := s.repository.GetUserByUsername(ctx, dto.Username); err == nil {
 		return "", ErrAlreadyExist
 	}
 
 	user := User{
 		Username:     dto.Username,
 		Email:        dto.Email,
-		PasswordHash: dto.Password,
+		PasswordHash: hash.GenerateHash(dto.Password),
 		CreatedAt:    time.Now(),
 	}
 
@@ -57,5 +65,5 @@ func (s *Service) SignUp(ctx context.Context, dto SignupDTO) (string, error) {
 }
 
 func (s *Service) GenerateToken(username string) (string, error) {
-	return "", nil
+	return "пошёл нахуй", nil
 }
