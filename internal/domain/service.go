@@ -1,8 +1,13 @@
 package domain
 
+import "classconnect-api/internal/domain/auth"
+
 type Services struct {
+	Auth *auth.Service
 }
 
 func NewServices() *Services {
-	return &Services{}
+	return &Services{
+		Auth: NewService(),
+	}
 }
