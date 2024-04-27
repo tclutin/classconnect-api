@@ -2,6 +2,7 @@ package auth
 
 import (
 	"classconnect-api/internal/domain/auth"
+	"classconnect-api/internal/handler/http/middleware"
 	"context"
 	"github.com/gin-gonic/gin"
 	"log/slog"
@@ -30,7 +31,7 @@ func NewHandler(service Service, logger *slog.Logger) *Handler {
 }
 
 func (h *Handler) InitAPI(router *gin.RouterGroup) {
-	authGroup := router.Group("/auth")
+	authGroup := router.Group("/auth", middleware.AuthMiddleware())
 	{
 		authGroup.POST("/signup", h.SignUp)
 		authGroup.POST("/login", h.LogIn)

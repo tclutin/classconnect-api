@@ -13,6 +13,7 @@ var (
 
 type User struct {
 	ID           uint64
+	GroupID      *uint64
 	Username     string
 	Email        string
 	PasswordHash string

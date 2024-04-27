@@ -4,6 +4,7 @@ import (
 	"classconnect-api/internal/domain/auth"
 	"classconnect-api/pkg/client/postgresql"
 	"context"
+	"fmt"
 	"log/slog"
 )
 
@@ -24,7 +25,7 @@ func NewUserRepository(client postgresql.Client, logger *slog.Logger) *UserRepos
 }
 
 func (u *UserRepository) CreateUser(ctx context.Context, user auth.User) error {
-	sql := `INSERT INTO public.user (username, email, hashed_password, created_at) VALUES ($1, $2, $3, $4)`
+	sql := `INSERT INTO public.users (username, email, hashed_password, created_at) VALUES ($1, $2, $3, $4)`
 
 	_, err := u.db.Exec(ctx, sql, user.Username, user.Email, user.PasswordHash, user.CreatedAt)
 
@@ -32,7 +33,7 @@ func (u *UserRepository) CreateUser(ctx context.Context, user auth.User) error {
 }
 
 func (u *UserRepository) GetUserByUsername(ctx context.Context, username string) (auth.User, error) {
-	sql := `SELECT * FROM public.user WHERE username = $1`
+	sql := `SELECT * FROM public.users WHERE username = $1`
 
 	u.logger.Info(layerUserRepository+"GetUserByUsername", slog.String("sql", sql))
 
@@ -42,6 +43,7 @@ func (u *UserRepository) GetUserByUsername(ctx context.Context, username string)
 
 	err := row.Scan(
 		&user.ID,
+		&user.GroupID,
 		&user.Username,
 		&user.Email,
 		&user.PasswordHash,
@@ -52,5 +54,6 @@ func (u *UserRepository) GetUserByUsername(ctx context.Context, username string)
 		return auth.User{}, err
 	}
 
+	fmt.Println(user)
 	return user, nil
 }

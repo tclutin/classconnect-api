@@ -39,7 +39,7 @@ func (s *Service) LogIn(ctx context.Context, dto LoginDTO) (string, error) {
 		return "", ErrPasswordNotMatch
 	}
 
-	token, err := s.GenerateToken(user.Username)
+	token, err := s.GenerateToken(user.Username, user.Email)
 	if err != nil {
 		return "", err
 	}
@@ -64,7 +64,7 @@ func (s *Service) SignUp(ctx context.Context, dto SignupDTO) (string, error) {
 		return "", err
 	}
 
-	token, err := s.GenerateToken(user.Username)
+	token, err := s.GenerateToken(user.Username, dto.Email)
 	if err != nil {
 		return "", err
 	}
@@ -72,14 +72,15 @@ func (s *Service) SignUp(ctx context.Context, dto SignupDTO) (string, error) {
 	return token, nil
 }
 
-func (s *Service) GenerateToken(username string) (string, error) {
-	token := jwt.New(jwt.SigningMethodEdDSA)
+func (s *Service) GenerateToken(username string, email string) (string, error) {
+	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
 	claims["exp"] = time.Now().Add(1 * time.Minute)
 	claims["authorized"] = true
 	claims["user"] = username
+	claims["email"] = email
 
-	tokenString, err := token.SignedString(s.config.JWT.Secret)
+	tokenString, err := token.SignedString([]byte(s.config.JWT.Secret))
 	if err != nil {
 		return "", err
 	}
