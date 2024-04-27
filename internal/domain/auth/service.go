@@ -1,8 +1,10 @@
 package auth
 
 import (
+	"classconnect-api/internal/config"
 	"classconnect-api/pkg/hash"
 	"context"
+	"github.com/golang-jwt/jwt/v5"
 	"time"
 )
 
@@ -16,11 +18,13 @@ type Repository interface {
 }
 
 type Service struct {
+	config     *config.Config
 	repository Repository
 }
 
-func NewService(repository Repository) *Service {
+func NewService(config *config.Config, repository Repository) *Service {
 	return &Service{
+		config:     config,
 		repository: repository,
 	}
 }
@@ -69,5 +73,16 @@ func (s *Service) SignUp(ctx context.Context, dto SignupDTO) (string, error) {
 }
 
 func (s *Service) GenerateToken(username string) (string, error) {
-	return "", nil
+	token := jwt.New(jwt.SigningMethodEdDSA)
+	claims := token.Claims.(jwt.MapClaims)
+	claims["exp"] = time.Now().Add(1 * time.Minute)
+	claims["authorized"] = true
+	claims["user"] = username
+
+	tokenString, err := token.SignedString(s.config.JWT.Secret)
+	if err != nil {
+		return "", err
+	}
+
+	return tokenString, nil
 }

@@ -36,7 +36,7 @@ func New() *App {
 	repositories := postgres.NewRepositories(client, logger)
 
 	//Init manager of serviсes
-	services := domain.NewServices(repositories)
+	services := domain.NewServices(cfg, repositories)
 
 	//Init the router
 	router := httpLayer.NewRouter(services, cfg, logger)
