@@ -1,4 +1,5 @@
 package auth
 
-type LoginResponse struct {
+type Token struct {
+	AccessToken string `json:"access_token"`
 }

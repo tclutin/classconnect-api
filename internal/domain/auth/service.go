@@ -10,16 +10,18 @@ type Service struct {
 	repository Repository
 }
 
-func NewService(repository Repository) *Service {
-	return &Service{
-		repository: repository,
-	}
+func NewService() *Service {
+	return &Service{}
 }
 
-func (s *Service) LogIn(ctx context.Context, dto LoginDTO) {
-
+func (s *Service) LogIn(ctx context.Context, dto LoginDTO) (string, error) {
+	return "", nil
 }
 
-func (s *Service) SignUp(ctx context.Context, dto SignupDTO) {
+func (s *Service) SignUp(ctx context.Context, dto SignupDTO) (string, error) {
+	return "", nil
+}
 
+func (s *Service) GenerateToken(login string, password string) (string, error) {
+	return "", nil
 }

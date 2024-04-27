@@ -5,11 +5,14 @@ import (
 	"context"
 	"github.com/gin-gonic/gin"
 	"log/slog"
+	"net/http"
 )
 
+const layer = "handler.auth."
+
 type Service interface {
-	LogIn(ctx context.Context, dto auth.LoginDTO)
-	SignUp(ctx context.Context, dto auth.SignupDTO)
+	LogIn(ctx context.Context, dto auth.LoginDTO) (string, error)
+	SignUp(ctx context.Context, dto auth.SignupDTO) (string, error)
 }
 
 type Handler struct {
@@ -33,9 +36,35 @@ func (h *Handler) InitAPI(router *gin.RouterGroup) {
 }
 
 func (h *Handler) LogIn(c *gin.Context) {
+	var request LoginRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
+	h.logger.Info(layer+"LogIn", slog.String("username", request.Username))
+
+	token, err := h.service.LogIn(context.Background(), request.ToDTO())
+	if err != nil {
+		return
+	}
+
+	c.JSON(http.StatusOK, Token{AccessToken: token})
 }
 
 func (h *Handler) SignUp(c *gin.Context) {
+	var request SignupRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
+	h.logger.Info(layer+"SignUp", slog.String("username", request.Username))
+
+	token, err := h.service.SignUp(context.Background(), request.ToDTO())
+	if err != nil {
+		return
+	}
+
+	c.JSON(http.StatusOK, Token{AccessToken: token})
 }

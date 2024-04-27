@@ -2,6 +2,7 @@ package app
 
 import (
 	"classconnect-api/internal/config"
+	"classconnect-api/internal/domain"
 	httpLayer "classconnect-api/internal/handler/http"
 	"classconnect-api/pkg/logging"
 	"context"
@@ -26,8 +27,11 @@ func New() *App {
 	//Init the slog
 	logger := logging.InitSlog(cfg.Environment)
 
+	//Init manager of serviсes
+	services := domain.NewServices()
+
 	//Init the router
-	router := httpLayer.NewRouter(cfg, logger)
+	router := httpLayer.NewRouter(services, cfg, logger)
 
 	return &App{
 		logger: logger,

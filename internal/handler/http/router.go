@@ -2,13 +2,14 @@ package http
 
 import (
 	"classconnect-api/internal/config"
+	"classconnect-api/internal/domain"
 	"classconnect-api/internal/handler/http/v1"
 	"github.com/gin-gonic/gin"
 	"log/slog"
 	"net/http"
 )
 
-func NewRouter(cfg *config.Config, logger *slog.Logger) *gin.Engine {
+func NewRouter(services *domain.Services, cfg *config.Config, logger *slog.Logger) *gin.Engine {
 	router := gin.Default()
 
 	router.Use(gin.Logger(), gin.Recovery())
@@ -25,7 +26,7 @@ func NewRouter(cfg *config.Config, logger *slog.Logger) *gin.Engine {
 
 	api := router.Group("/api")
 	{
-		v1.NewHandler(logger).InitAPI(api)
+		v1.NewHandler(services, logger).InitAPI(api)
 	}
 
 	return router

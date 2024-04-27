@@ -2,17 +2,14 @@ package domain
 
 import (
 	"classconnect-api/internal/domain/auth"
-	"classconnect-api/internal/domain/token"
 )
 
 type Services struct {
-	Auth  *auth.Service
-	Token *token.Service
+	Auth *auth.Service
 }
 
 func NewServices() *Services {
 	return &Services{
-		Auth:  nil,
-		Token: token.NewService(),
+		Auth: auth.NewService(),
 	}
 }
