@@ -4,7 +4,6 @@ import (
 	"classconnect-api/internal/domain/auth"
 	"classconnect-api/pkg/client/postgresql"
 	"context"
-	"fmt"
 	"log/slog"
 )
 
@@ -54,6 +53,5 @@ func (u *UserRepository) GetUserByUsername(ctx context.Context, username string)
 		return auth.User{}, err
 	}
 
-	fmt.Println(user)
 	return user, nil
 }

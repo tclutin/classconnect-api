@@ -22,6 +22,6 @@ func NewHandler(services *domain.Services, logger *slog.Logger) *Handler {
 func (h *Handler) InitAPI(router *gin.RouterGroup) {
 	v1 := router.Group("/v1")
 	{
-		auth.NewHandler(h.services.Auth, h.logger).InitAPI(v1)
+		auth.NewHandler(h.services.Auth, h.logger).InitAPI(v1, h.services.Auth)
 	}
 }

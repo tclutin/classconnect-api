@@ -30,8 +30,8 @@ func NewHandler(service Service, logger *slog.Logger) *Handler {
 	}
 }
 
-func (h *Handler) InitAPI(router *gin.RouterGroup) {
-	authGroup := router.Group("/auth", middleware.AuthMiddleware())
+func (h *Handler) InitAPI(router *gin.RouterGroup, auth *auth.Service) {
+	authGroup := router.Group("/auth", middleware.AuthMiddleware(auth))
 	{
 		authGroup.POST("/signup", h.SignUp)
 		authGroup.POST("/login", h.LogIn)

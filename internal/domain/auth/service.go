@@ -4,6 +4,7 @@ import (
 	"classconnect-api/internal/config"
 	"classconnect-api/pkg/hash"
 	"context"
+	"errors"
 	"github.com/golang-jwt/jwt/v5"
 	"time"
 )
@@ -11,6 +12,12 @@ import (
 const (
 	layerAuthService = "service.auth."
 )
+
+type tokenClaims struct {
+	jwt.RegisteredClaims
+	Username string
+	Email    string
+}
 
 type Repository interface {
 	CreateUser(ctx context.Context, user User) error
@@ -87,4 +94,25 @@ func (s *Service) GenerateToken(username string, email string) (string, error) {
 	}
 
 	return tokenString, nil
+}
+
+func (s *Service) ParseToken(accessToken string) (*tokenClaims, error) {
+	token, err := jwt.ParseWithClaims(accessToken, &tokenClaims{}, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("invalid signing method")
+		}
+
+		return []byte(s.config.JWT.Secret), nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	claims, ok := token.Claims.(*tokenClaims)
+	if !ok {
+		return nil, errors.New("token claims are not of type *tokenClaims")
+	}
+
+	return claims, nil
 }
