@@ -31,7 +31,7 @@ func (s *Service) LogIn(ctx context.Context, dto LoginDTO) (string, error) {
 		return "", ErrNotFound
 	}
 
-	if user.PasswordHash != hash.GenerateHash(dto.Password) {
+	if user.PasswordHash != hash.GenerateSha1Hash(dto.Password) {
 		return "", ErrPasswordNotMatch
 	}
 
@@ -51,7 +51,7 @@ func (s *Service) SignUp(ctx context.Context, dto SignupDTO) (string, error) {
 	user := User{
 		Username:     dto.Username,
 		Email:        dto.Email,
-		PasswordHash: hash.GenerateHash(dto.Password),
+		PasswordHash: hash.GenerateSha1Hash(dto.Password),
 		CreatedAt:    time.Now(),
 	}
 

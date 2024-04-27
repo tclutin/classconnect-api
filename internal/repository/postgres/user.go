@@ -24,7 +24,7 @@ func NewUserRepository(client postgresql.Client, logger *slog.Logger) *UserRepos
 }
 
 func (u *UserRepository) CreateUser(ctx context.Context, user auth.User) error {
-	sql := "INSERT INTO public.user (username, email, hashed_password, created_at) VALUES ($1, $2, $3, $4)"
+	sql := `INSERT INTO public.user (username, email, hashed_password, created_at) VALUES ($1, $2, $3, $4)`
 
 	_, err := u.db.Exec(ctx, sql, user.Username, user.Email, user.PasswordHash, user.CreatedAt)
 
@@ -32,7 +32,7 @@ func (u *UserRepository) CreateUser(ctx context.Context, user auth.User) error {
 }
 
 func (u *UserRepository) GetUserByUsername(ctx context.Context, username string) (auth.User, error) {
-	sql := "SELECT * FROM public.user WHERE username = $1"
+	sql := `SELECT * FROM public.user WHERE username = $1`
 
 	u.logger.Info(layerUserRepository+"GetUserByUsername", slog.String("sql", sql))
 

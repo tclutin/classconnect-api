@@ -54,7 +54,6 @@ func (a *App) Run(ctx context.Context) {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
 
-	//TODO: print logging about start the server
 	go func() {
 		err := a.httpServer.ListenAndServe()
 		if err != nil && !errors.Is(err, http.ErrServerClosed) {
