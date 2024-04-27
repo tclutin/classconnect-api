@@ -1,8 +1,6 @@
 package auth
 
-type Repository interface {
-	CreateUser()
-}
+type Repository interface{}
 
 type Service struct {
 	repository Repository
