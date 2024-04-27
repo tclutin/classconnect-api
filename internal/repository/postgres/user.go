@@ -7,7 +7,9 @@ import (
 	"log/slog"
 )
 
-const layer_user_repository = "repository.user."
+const (
+	layerUserRepository = "repository.user."
+)
 
 type UserRepository struct {
 	db     postgresql.Client
@@ -24,8 +26,6 @@ func NewUserRepository(client postgresql.Client, logger *slog.Logger) *UserRepos
 func (u *UserRepository) CreateUser(ctx context.Context, user auth.User) error {
 	sql := "INSERT INTO public.user (username, email, hashed_password, created_at) VALUES ($1, $2, $3, $4)"
 
-	u.logger.Info(layer_user_repository+"CreateUser", slog.String("sql", sql))
-
 	_, err := u.db.Exec(ctx, sql, user.Username, user.Email, user.PasswordHash, user.CreatedAt)
 
 	return err
@@ -34,11 +34,12 @@ func (u *UserRepository) CreateUser(ctx context.Context, user auth.User) error {
 func (u *UserRepository) GetUserByUsername(ctx context.Context, username string) (auth.User, error) {
 	sql := "SELECT * FROM public.user WHERE username = $1"
 
-	u.logger.Info(layer_user_repository+"GetUserByUsername", slog.String("sql", sql))
+	u.logger.Info(layerUserRepository+"GetUserByUsername", slog.String("sql", sql))
 
 	var user auth.User
 
 	row := u.db.QueryRow(ctx, sql, username)
+
 	err := row.Scan(
 		&user.ID,
 		&user.Username,

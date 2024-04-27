@@ -6,6 +6,10 @@ import (
 	"time"
 )
 
+const (
+	layerAuthService = "service.auth."
+)
+
 type Repository interface {
 	CreateUser(ctx context.Context, user User) error
 	GetUserByUsername(ctx context.Context, username string) (User, error)
