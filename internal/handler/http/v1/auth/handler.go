@@ -46,6 +46,7 @@ func (h *Handler) LogIn(c *gin.Context) {
 
 	token, err := h.service.LogIn(context.Background(), request.ToDTO())
 	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -63,6 +64,7 @@ func (h *Handler) SignUp(c *gin.Context) {
 
 	token, err := h.service.SignUp(context.Background(), request.ToDTO())
 	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
