@@ -1,14 +1,15 @@
 package auth
 
 import (
+	"classconnect-api/internal/domain/auth"
 	"context"
 	"github.com/gin-gonic/gin"
 	"log/slog"
 )
 
 type Service interface {
-	LogIn(ctx context.Context)
-	SignUp(ctx context.Context)
+	LogIn(ctx context.Context, dto auth.LoginDTO)
+	SignUp(ctx context.Context, dto auth.SignupDTO)
 }
 
 type Handler struct {

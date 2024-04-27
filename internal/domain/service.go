@@ -12,7 +12,7 @@ type Services struct {
 
 func NewServices() *Services {
 	return &Services{
-		Auth:  auth.NewService(nil),
+		Auth:  nil,
 		Token: token.NewService(),
 	}
 }
