@@ -79,9 +79,24 @@ func (s *Service) SignUp(ctx context.Context, dto SignupDTO) (string, error) {
 	return token, nil
 }
 
+func (s *Service) GetUserByUsername(ctx context.Context, username string) (User, error) {
+	user, err := s.repository.GetUserByUsername(ctx, username)
+	if err != nil {
+		return User{}, ErrNotFound
+	}
+
+	return user, nil
+}
+
 func (s *Service) GenerateToken(username string, email string) (string, error) {
+	//TODO: возможно тут будут в будушем проблемы с парсингом
+	duration, err := time.ParseDuration(s.config.JWT.Expire)
+	if err != nil {
+		return "", errors.New("error of parsing duration")
+	}
+
 	payload := jwt.MapClaims{
-		"exp":      time.Now().Add(1 * time.Minute).Unix(),
+		"exp":      time.Now().Add(duration).Unix(),
 		"username": username,
 		"email":    email,
 	}

@@ -16,6 +16,7 @@ const (
 type Service interface {
 	LogIn(ctx context.Context, dto auth.LoginDTO) (string, error)
 	SignUp(ctx context.Context, dto auth.SignupDTO) (string, error)
+	GetUserByUsername(ctx context.Context, username string) (auth.User, error)
 }
 
 type Handler struct {
@@ -31,10 +32,11 @@ func NewHandler(service Service, logger *slog.Logger) *Handler {
 }
 
 func (h *Handler) InitAPI(router *gin.RouterGroup, auth *auth.Service) {
-	authGroup := router.Group("/auth", middleware.AuthMiddleware(auth))
+	authGroup := router.Group("/auth")
 	{
 		authGroup.POST("/signup", h.SignUp)
 		authGroup.POST("/login", h.LogIn)
+		authGroup.GET("/me", middleware.AuthMiddleware(auth), h.Me)
 	}
 }
 
@@ -71,5 +73,20 @@ func (h *Handler) SignUp(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, Token{AccessToken: token})
+	c.JSON(http.StatusCreated, Token{AccessToken: token})
+}
+
+func (h *Handler) Me(c *gin.Context) {
+	value, exists := c.Get("username")
+	if !exists {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "username not found in context"})
+		return
+	}
+
+	user, err := h.service.GetUserByUsername(context.Background(), value.(string))
+	if err != nil {
+		return
+	}
+
+	c.JSON(http.StatusOK, user)
 }

@@ -55,3 +55,21 @@ func (u *UserRepository) GetUserByUsername(ctx context.Context, username string)
 
 	return user, nil
 }
+
+func (u *UserRepository) UpdateUser(ctx context.Context, user auth.User) error {
+	sql := `UPDATE public.users SET group_id = $1,
+                        username = $2,
+                        email = $3,
+                        hashed_password = $4,
+                        is_banned = $5 WHERE id = $6`
+
+	_, err := u.db.Exec(ctx, sql,
+		user.GroupID,
+		user.Username,
+		user.Email,
+		user.PasswordHash,
+		user.IsBanned,
+		user.ID)
+
+	return err
+}
