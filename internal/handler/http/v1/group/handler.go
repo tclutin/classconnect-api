@@ -34,9 +34,9 @@ func NewHandler(service Service, logger *slog.Logger) *Handler {
 func (h *Handler) InitAPI(router *gin.RouterGroup, auth *auth.Service) {
 	groupGroup := router.Group("/groups")
 	{
+		groupGroup.POST("", middleware.AuthMiddleware(auth), h.CreateGroup)
 		groupGroup.POST("/:groupID/join", h.JoinToGroup)
 		groupGroup.GET("/", h.GetAllGroups)
-		groupGroup.POST("", middleware.AuthMiddleware(auth), h.CreateGroup)
 		//groupGroup.DELETE("/:groupID", middleware.AuthMiddleware(auth), h.DeleteGroup)
 	}
 }
@@ -82,9 +82,5 @@ func (h *Handler) DeleteGroup(c *gin.Context) {
 }
 
 func (h *Handler) JoinToGroup(c *gin.Context) {
-
-}
-
-func (h *Handler) GetGroupById(c *gin.Context) {
 
 }

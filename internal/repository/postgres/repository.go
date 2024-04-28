@@ -6,13 +6,15 @@ import (
 )
 
 type Repositories struct {
-	User  *UserRepository
-	Group *GroupRepository
+	User       *UserRepository
+	Group      *GroupRepository
+	Subscriber *SubscriberRepository
 }
 
 func NewRepositories(client postgresql.Client, logger *slog.Logger) *Repositories {
 	return &Repositories{
-		User:  NewUserRepository(client, logger),
-		Group: NewGroupRepository(client, logger),
+		User:       NewUserRepository(client, logger),
+		Group:      NewGroupRepository(client, logger),
+		Subscriber: NewSubscriberRepository(client, logger),
 	}
 }
