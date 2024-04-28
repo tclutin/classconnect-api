@@ -40,6 +40,7 @@ func (g *GroupRepository) GetGroupByName(ctx context.Context, name string) (grou
 
 	err := row.Scan(
 		&getGroup.ID,
+		&getGroup.WeekId,
 		&getGroup.Name,
 		&getGroup.Code,
 		&getGroup.MembersCount,

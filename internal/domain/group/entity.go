@@ -13,6 +13,7 @@ var (
 
 type Group struct {
 	ID           uint64
+	WeekId       *uint64
 	Name         string
 	Code         string
 	MembersCount uint
