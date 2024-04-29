@@ -17,6 +17,7 @@ const (
 type Service interface {
 	CreateGroup(ctx context.Context, username string, name string) (group.Group, error)
 	GetAllGroups(ctx context.Context) ([]group.Group, error)
+	JoinToGroup(ctx context.Context, groupId string, subId uint64, code string) error
 }
 
 type Handler struct {
@@ -35,9 +36,8 @@ func (h *Handler) InitAPI(router *gin.RouterGroup, auth *auth.Service) {
 	groupGroup := router.Group("/groups", middleware.AuthMiddleware(auth))
 	{
 		groupGroup.POST("", h.CreateGroup)
-		//groupGroup.POST("/:groupID/join", h.JoinToGroup)
 		groupGroup.GET("", h.GetAllGroups)
-		//groupGroup.DELETE("/:groupID", middleware.AuthMiddleware(auth), h.DeleteGroup)
+		groupGroup.POST("/:groupID/join", h.JoinToGroup)
 	}
 }
 
@@ -77,10 +77,20 @@ func (h *Handler) GetAllGroups(c *gin.Context) {
 	c.JSON(http.StatusOK, groups)
 }
 
-func (h *Handler) DeleteGroup(c *gin.Context) {
-
-}
-
 func (h *Handler) JoinToGroup(c *gin.Context) {
+	var request JoinToGroupRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
+	groupId := c.Param("groupID")
+
+	err := h.service.JoinToGroup(context.Background(), groupId, request.ID, request.Code)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"status": "Successfully"})
 }

@@ -6,9 +6,10 @@ import (
 )
 
 var (
-	ErrNotFound      = errors.New("group not found")
-	ErrWrongCode     = errors.New("wrong group code")
-	ErrAlreadyExists = errors.New("group already exists with this name")
+	ErrNotFound                  = errors.New("group not found")
+	ErrWrongCode                 = errors.New("wrong group code")
+	ErrAlreadyExistsSubWithGroup = errors.New("subscriber has group")
+	ErrAlreadyExists             = errors.New("group already exists with this name")
 )
 
 type Group struct {

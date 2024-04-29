@@ -5,5 +5,6 @@ type CreateGroupRequest struct {
 }
 
 type JoinToGroupRequest struct {
+	ID   uint64 `json:"sub_id" binding:"required"`
 	Code string `json:"code" binding:"required,min=4,max=4"`
 }

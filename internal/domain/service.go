@@ -16,7 +16,7 @@ type Services struct {
 
 func NewServices(config *config.Config, repositories *postgres.Repositories) *Services {
 	authService := auth.NewService(config, repositories.User)
-	groupService := group.NewService(repositories.Group, repositories.User)
+	groupService := group.NewService(repositories.Group, repositories.User, repositories.Subscriber)
 	subscriberService := subscriber.NewService(repositories.Subscriber)
 	return &Services{
 		Auth:       authService,

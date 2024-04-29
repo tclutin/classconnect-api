@@ -23,6 +23,28 @@ func NewGroupRepository(client postgresql.Client, logger *slog.Logger) *GroupRep
 	}
 }
 
+func (g *GroupRepository) GetGroupById(ctx context.Context, id string) (group.Group, error) {
+	sql := `SELECT * FROM public.groups WHERE id = $1`
+
+	var getGroup group.Group
+
+	row := g.db.QueryRow(ctx, sql, id)
+
+	err := row.Scan(
+		&getGroup.ID,
+		&getGroup.WeekId,
+		&getGroup.Name,
+		&getGroup.Code,
+		&getGroup.MembersCount,
+		&getGroup.CreatedAt)
+
+	if err != nil {
+		return group.Group{}, err
+	}
+
+	return getGroup, nil
+}
+
 func (g *GroupRepository) CreateGroup(ctx context.Context, group group.Group) error {
 	sql := `INSERT INTO public.groups (name, code, created_at) VALUES ($1, $2, $3)`
 
@@ -80,4 +102,15 @@ func (g *GroupRepository) GetAllGroups(ctx context.Context) ([]group.Group, erro
 	}
 
 	return groups, nil
+}
+
+func (g *GroupRepository) UpdateGroup(ctx context.Context, group group.Group) error {
+	sql := `UPDATE public.groups SET week_id = $1,
+                         name = $2,
+                         code = $3, 
+                         members_count = $4 WHERE id = $5`
+
+	_, err := g.db.Exec(ctx, sql, group.WeekId, group.Name, group.Code, group.MembersCount, group.ID)
+
+	return err
 }

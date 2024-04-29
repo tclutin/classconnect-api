@@ -2,15 +2,22 @@ package group
 
 import (
 	"classconnect-api/internal/domain/auth"
+	"classconnect-api/internal/domain/subscriber"
 	"classconnect-api/pkg/hash"
 	"context"
 	"errors"
+	"strings"
 	"time"
 )
 
 const (
 	layerGroupService = "service.group."
 )
+
+type SubscriberRepository interface {
+	GetSubscriberById(ctx context.Context, id uint64) (subscriber.Subscriber, error)
+	UpdateSubscriber(ctx context.Context, sub subscriber.Subscriber) error
+}
 
 type UserRepository interface {
 	GetUserByUsername(ctx context.Context, username string) (auth.User, error)
@@ -20,19 +27,56 @@ type UserRepository interface {
 type Repository interface {
 	CreateGroup(ctx context.Context, group Group) error
 	GetGroupByName(ctx context.Context, name string) (Group, error)
+	GetGroupById(ctx context.Context, name string) (Group, error)
 	GetAllGroups(ctx context.Context) ([]Group, error)
+	UpdateGroup(ctx context.Context, group Group) error
 }
 
 type Service struct {
 	repository     Repository
 	userRepository UserRepository
+	subRepository  SubscriberRepository
 }
 
-func NewService(repository Repository, userRepository UserRepository) *Service {
+func NewService(repository Repository, userRepository UserRepository, subRepostitory SubscriberRepository) *Service {
 	return &Service{
 		repository:     repository,
 		userRepository: userRepository,
+		subRepository:  subRepostitory,
 	}
+}
+
+func (s *Service) JoinToGroup(ctx context.Context, groupId string, subId uint64, code string) error {
+	sub, err := s.subRepository.GetSubscriberById(ctx, subId)
+	if err != nil {
+		return subscriber.ErrNotFound
+	}
+
+	group, err := s.repository.GetGroupById(ctx, groupId)
+	if err != nil {
+		return ErrNotFound
+	}
+
+	if sub.GroupId != nil {
+		return ErrAlreadyExistsSubWithGroup
+	}
+
+	if !strings.Contains(code, group.Code) {
+		return ErrWrongCode
+	}
+
+	sub.GroupId = &group.ID
+	group.MembersCount++
+
+	if err = s.repository.UpdateGroup(ctx, group); err != nil {
+		return err
+	}
+
+	if err = s.subRepository.UpdateSubscriber(ctx, sub); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *Service) CreateGroup(ctx context.Context, username string, name string) (Group, error) {

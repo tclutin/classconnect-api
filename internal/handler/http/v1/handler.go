@@ -4,6 +4,7 @@ import (
 	"classconnect-api/internal/domain"
 	"classconnect-api/internal/handler/http/v1/auth"
 	"classconnect-api/internal/handler/http/v1/group"
+	"classconnect-api/internal/handler/http/v1/schedule"
 	"classconnect-api/internal/handler/http/v1/subscriber"
 	"github.com/gin-gonic/gin"
 	"log/slog"
@@ -27,5 +28,6 @@ func (h *Handler) InitAPI(router *gin.RouterGroup) {
 		auth.NewHandler(h.services.Auth, h.logger).InitAPI(v1, h.services.Auth)
 		group.NewHandler(h.services.Group, h.logger).InitAPI(v1, h.services.Auth)
 		subscriber.NewHandler(h.services.Subscriber, h.logger).InitAPI(v1, h.services.Auth)
+		schedule.NewHandler(nil, h.logger).InitAPI(v1, h.services.Auth)
 	}
 }
