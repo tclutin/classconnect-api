@@ -17,14 +17,14 @@ type ScheduleRepository struct {
 	logger *slog.Logger
 }
 
-func NewScheduleRepository(client postgresql.Client, logger *slog.Logger) *GroupRepository {
-	return &GroupRepository{
+func NewScheduleRepository(client postgresql.Client, logger *slog.Logger) *ScheduleRepository {
+	return &ScheduleRepository{
 		db:     client,
 		logger: logger,
 	}
 }
 
-func (s *ScheduleRepository) CreateSchedule(ctx context.Context, schedule schedule.UploadScheduleDTO) error {
+func (s *ScheduleRepository) CreateSchedule(ctx context.Context, schedule schedule.UploadScheduleDTO, groupID *uint64) error {
 	tx, err := s.db.Begin(ctx)
 	if err != nil {
 		return err
@@ -32,7 +32,7 @@ func (s *ScheduleRepository) CreateSchedule(ctx context.Context, schedule schedu
 	defer tx.Rollback(ctx)
 
 	for _, week := range schedule.Weeks {
-		weekID, err := s.CreateWeek(ctx, tx, week)
+		weekID, err := s.CreateWeek(ctx, tx, week, groupID)
 		if err != nil {
 			return err
 		}
@@ -59,12 +59,12 @@ func (s *ScheduleRepository) CreateSchedule(ctx context.Context, schedule schedu
 	return nil
 }
 
-func (s *ScheduleRepository) CreateWeek(ctx context.Context, tx pgx.Tx, week schedule.WeekDTO) (uint64, error) {
-	sql := `INSERT INTO public.weeks (is_even) VALUES ($1) RETURNING id`
+func (s *ScheduleRepository) CreateWeek(ctx context.Context, tx pgx.Tx, week schedule.WeekDTO, groupID *uint64) (uint64, error) {
+	sql := `INSERT INTO public.weeks (group_id, is_even) VALUES ($1, $2) RETURNING id`
 
 	var weekID uint64
 
-	err := tx.QueryRow(ctx, sql, week.IsEven).Scan(&weekID)
+	err := tx.QueryRow(ctx, sql, groupID, week.IsEven).Scan(&weekID)
 	if err != nil {
 		return 0, err
 	}
@@ -85,7 +85,6 @@ func (s *ScheduleRepository) CreateDay(ctx context.Context, tx pgx.Tx, weekID ui
 	return dayID, nil
 }
 
-// TODO: сохранение времени
 func (s *ScheduleRepository) CreateSubject(ctx context.Context, tx pgx.Tx, dayID uint64, day schedule.SubjectDTO) error {
 	sql := `INSERT INTO public.subjects (day_id,
                              teacher,
@@ -93,9 +92,17 @@ func (s *ScheduleRepository) CreateSubject(ctx context.Context, tx pgx.Tx, dayID
                              cabinet,
                              description,
                              time_start,
-                             time_end) VALUES ($1, $2, $3, $4, $5, $6, $7)`
+                             time_end) VALUES ($1,$2, $3, $4, $5, $6, $7)`
 
-	_, err := tx.Exec(ctx, sql, dayID, day.Teacher, day.Name, day.Cabinet, day.Description, day.StartTime, day.EndTime)
+	_, err := tx.Exec(ctx, sql,
+		dayID,
+		day.Teacher,
+		day.Name,
+		day.Cabinet,
+		day.Description,
+		day.StartTime,
+		day.EndTime)
+
 	if err != nil {
 		return err
 	}

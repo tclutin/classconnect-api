@@ -9,6 +9,7 @@ type Repositories struct {
 	User       *UserRepository
 	Group      *GroupRepository
 	Subscriber *SubscriberRepository
+	Schedule   *ScheduleRepository
 }
 
 func NewRepositories(client postgresql.Client, logger *slog.Logger) *Repositories {
@@ -16,5 +17,6 @@ func NewRepositories(client postgresql.Client, logger *slog.Logger) *Repositorie
 		User:       NewUserRepository(client, logger),
 		Group:      NewGroupRepository(client, logger),
 		Subscriber: NewSubscriberRepository(client, logger),
+		Schedule:   NewScheduleRepository(client, logger),
 	}
 }

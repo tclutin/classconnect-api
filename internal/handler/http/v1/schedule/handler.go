@@ -5,6 +5,7 @@ import (
 	"classconnect-api/internal/domain/schedule"
 	"classconnect-api/internal/handler/http/middleware"
 	"context"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"log/slog"
 	"net/http"
@@ -44,6 +45,8 @@ func (h *Handler) UploadSchedule(c *gin.Context) {
 		return
 	}
 
+	fmt.Println(request.ToDTO())
+
 	username, exists := c.Get("username")
 	if !exists {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "username not found in context"})
@@ -57,5 +60,5 @@ func (h *Handler) UploadSchedule(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, "scheduled successfully uploaded")
+	c.JSON(http.StatusOK, gin.H{"status": "Successfully"})
 }
