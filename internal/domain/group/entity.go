@@ -13,10 +13,10 @@ var (
 )
 
 type Group struct {
-	ID uint64
-	//WeekId       *uint64
-	Name         string
-	Code         string
-	MembersCount uint
-	CreatedAt    time.Time
+	ID               uint64
+	Name             string
+	Code             string
+	IsExistsSchedule bool
+	MembersCount     uint
+	CreatedAt        time.Time
 }

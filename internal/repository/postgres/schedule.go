@@ -24,7 +24,7 @@ func NewScheduleRepository(client postgresql.Client, logger *slog.Logger) *Sched
 	}
 }
 
-func (s *ScheduleRepository) CreateSchedule(ctx context.Context, schedule schedule.UploadScheduleDTO, groupID *uint64) error {
+func (s *ScheduleRepository) CreateSchedule(ctx context.Context, schedule schedule.UploadScheduleDTO, groupID uint64) error {
 	tx, err := s.db.Begin(ctx)
 	if err != nil {
 		return err
@@ -59,7 +59,7 @@ func (s *ScheduleRepository) CreateSchedule(ctx context.Context, schedule schedu
 	return nil
 }
 
-func (s *ScheduleRepository) CreateWeek(ctx context.Context, tx pgx.Tx, week schedule.WeekDTO, groupID *uint64) (uint64, error) {
+func (s *ScheduleRepository) CreateWeek(ctx context.Context, tx pgx.Tx, week schedule.WeekDTO, groupID uint64) (uint64, error) {
 	sql := `INSERT INTO public.weeks (group_id, is_even) VALUES ($1, $2) RETURNING id`
 
 	var weekID uint64
