@@ -32,7 +32,7 @@ func (g *GroupRepository) GetGroupById(ctx context.Context, id string) (group.Gr
 
 	err := row.Scan(
 		&getGroup.ID,
-		&getGroup.WeekId,
+		//&getGroup.WeekId,
 		&getGroup.Name,
 		&getGroup.Code,
 		&getGroup.MembersCount,
@@ -62,7 +62,7 @@ func (g *GroupRepository) GetGroupByName(ctx context.Context, name string) (grou
 
 	err := row.Scan(
 		&getGroup.ID,
-		&getGroup.WeekId,
+		//&getGroup.WeekId,
 		&getGroup.Name,
 		&getGroup.Code,
 		&getGroup.MembersCount,
@@ -105,12 +105,11 @@ func (g *GroupRepository) GetAllGroups(ctx context.Context) ([]group.Group, erro
 }
 
 func (g *GroupRepository) UpdateGroup(ctx context.Context, group group.Group) error {
-	sql := `UPDATE public.groups SET week_id = $1,
-                         name = $2,
-                         code = $3, 
-                         members_count = $4 WHERE id = $5`
+	sql := `UPDATE public.groups SET /*week_id = $1,*/ name = $1,
+                         code = $2, 
+                         members_count = $3 WHERE id = $4`
 
-	_, err := g.db.Exec(ctx, sql, group.WeekId, group.Name, group.Code, group.MembersCount, group.ID)
+	_, err := g.db.Exec(ctx, sql /*group.WeekId,*/, group.Name, group.Code, group.MembersCount, group.ID)
 
 	return err
 }

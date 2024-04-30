@@ -2,6 +2,7 @@ package schedule
 
 import (
 	"classconnect-api/internal/domain/auth"
+	"classconnect-api/internal/domain/schedule"
 	"classconnect-api/internal/handler/http/middleware"
 	"context"
 	"github.com/gin-gonic/gin"
@@ -14,7 +15,7 @@ const (
 )
 
 type Service interface {
-	UploadSchedule(ctx context.Context, schedule UploadScheduleRequest, groupId uint64) error
+	UploadSchedule(ctx context.Context, schedule schedule.UploadScheduleDTO, username string) error
 }
 
 type Handler struct {
@@ -43,4 +44,18 @@ func (h *Handler) UploadSchedule(c *gin.Context) {
 		return
 	}
 
+	username, exists := c.Get("username")
+	if !exists {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "username not found in context"})
+		return
+	}
+
+	//TODO: возможно username не лучшая идея... лучше передавать id группы
+	err := h.service.UploadSchedule(context.Background(), request.ToDTO(), username.(string))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusCreated, "scheduled successfully uploaded")
 }

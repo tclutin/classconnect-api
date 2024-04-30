@@ -28,6 +28,6 @@ func (h *Handler) InitAPI(router *gin.RouterGroup) {
 		auth.NewHandler(h.services.Auth, h.logger).InitAPI(v1, h.services.Auth)
 		group.NewHandler(h.services.Group, h.logger).InitAPI(v1, h.services.Auth)
 		subscriber.NewHandler(h.services.Subscriber, h.logger).InitAPI(v1, h.services.Auth)
-		schedule.NewHandler(nil, h.logger).InitAPI(v1, h.services.Auth)
+		schedule.NewHandler(h.services.Schedule, h.logger).InitAPI(v1, h.services.Auth)
 	}
 }

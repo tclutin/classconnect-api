@@ -3,10 +3,10 @@ package schedule
 import "time"
 
 type Schedule struct {
-	ID         uint64
-	SubjectID  *uint64
-	WeekNumber int
-	IsEven     bool
+	ID        uint64
+	SubjectID *uint64
+	DayNumber int
+	IsEven    bool
 }
 
 type Subject struct {
