@@ -20,7 +20,7 @@ func NewServices(config *config.Config, repositories *postgres.Repositories) *Se
 	authService := auth.NewService(config, repositories.User)
 	groupService := group.NewService(repositories.Group, repositories.User, repositories.Subscriber)
 	subscriberService := subscriber.NewService(repositories.Subscriber)
-	scheduleService := schedule.NewService(repositories.Schedule, repositories.User, repositories.Group)
+	scheduleService := schedule.NewService(repositories.Schedule, repositories.User, repositories.Group, repositories.Subscriber)
 	return &Services{
 		Auth:       authService,
 		Group:      groupService,

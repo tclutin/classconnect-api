@@ -3,7 +3,8 @@ package subscriber
 import "errors"
 
 var (
-	ErrNotFound = errors.New("subscriber not found")
+	ErrNotFound       = errors.New("subscriber not found")
+	ErrNotExistsGroup = errors.New("subscriber does not have a group")
 )
 
 type Subscriber struct {

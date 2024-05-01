@@ -2,6 +2,10 @@ package schedule
 
 import "classconnect-api/internal/domain/schedule"
 
+type GetScheduleForDayRequest struct {
+	ID uint64 `json:"sub_id" binding:"required"`
+}
+
 type UploadScheduleRequest struct {
 	Weeks []Week `json:"weeks" binding:"required"`
 }

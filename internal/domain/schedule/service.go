@@ -3,10 +3,16 @@ package schedule
 import (
 	"classconnect-api/internal/domain/auth"
 	"classconnect-api/internal/domain/group"
+	"classconnect-api/internal/domain/subscriber"
 	"context"
 	"errors"
 	"strconv"
+	"time"
 )
+
+type SubRepository interface {
+	GetSubscriberById(ctx context.Context, id uint64) (subscriber.Subscriber, error)
+}
 
 type UserRepository interface {
 	GetUserByUsername(ctx context.Context, username string) (auth.User, error)
@@ -19,24 +25,63 @@ type GroupRepository interface {
 
 type Repository interface {
 	CreateSchedule(ctx context.Context, schedule UploadScheduleDTO, groupID uint64) error
+	GetScheduleForDay(ctx context.Context, groupID uint64, dayNumber int, isEven bool) ([]SubjectDTO, error)
+	DeleteSchedule(ctx context.Context, groupID uint64) error
 }
 
 type Service struct {
-	repository Repository
-	userRepo   UserRepository
-	groupRepo  GroupRepository
+	repository      Repository
+	userRepository  UserRepository
+	groupRepository GroupRepository
+	subRepository   SubRepository
 }
 
-func NewService(repository Repository, userRepository UserRepository, groupRepository group.Repository) *Service {
+func NewService(
+	repository Repository,
+	userRepository UserRepository,
+	groupRepository GroupRepository,
+	subRepository SubRepository,
+) *Service {
+
 	return &Service{
-		repository: repository,
-		userRepo:   userRepository,
-		groupRepo:  groupRepository,
+		repository:      repository,
+		userRepository:  userRepository,
+		groupRepository: groupRepository,
+		subRepository:   subRepository,
 	}
 }
 
+func (s *Service) GetScheduleForDay(ctx context.Context, subID uint64) ([]SubjectDTO, error) {
+	sub, err := s.subRepository.GetSubscriberById(ctx, subID)
+	if err != nil {
+		return nil, err
+	}
+
+	if sub.GroupId == nil {
+		return nil, errors.New("you don't have a group")
+	}
+
+	strGroupID := strconv.FormatUint(*sub.GroupId, 10)
+
+	group, err := s.groupRepository.GetGroupById(ctx, strGroupID)
+	if err != nil {
+		return nil, err
+	}
+
+	if !group.IsExistsSchedule {
+		return nil, ErrNotExists
+	}
+
+	subjects, err := s.repository.GetScheduleForDay(ctx, *sub.GroupId, s.GetDayOfWeek(), s.IsEvenWeek())
+	if err != nil {
+		return nil, err
+	}
+
+	return subjects, nil
+}
+
 func (s *Service) UploadSchedule(ctx context.Context, schedule UploadScheduleDTO, username string) error {
-	user, err := s.userRepo.GetUserByUsername(ctx, username)
+	user, err := s.userRepository.GetUserByUsername(ctx, username)
 	if err != nil {
 		return auth.ErrNotFound
 	}
@@ -51,7 +96,7 @@ func (s *Service) UploadSchedule(ctx context.Context, schedule UploadScheduleDTO
 
 	strGroupID := strconv.FormatUint(*user.GroupID, 10)
 
-	group, err := s.groupRepo.GetGroupById(ctx, strGroupID)
+	group, err := s.groupRepository.GetGroupById(ctx, strGroupID)
 	if err != nil {
 		return err
 	}
@@ -65,7 +110,36 @@ func (s *Service) UploadSchedule(ctx context.Context, schedule UploadScheduleDTO
 	}
 
 	group.IsExistsSchedule = true
-	if err = s.groupRepo.UpdateGroup(ctx, group); err != nil {
+	if err = s.groupRepository.UpdateGroup(ctx, group); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *Service) DeleteSchedule(ctx context.Context, username string) error {
+	user, err := s.userRepository.GetUserByUsername(ctx, username)
+	if err != nil {
+		return auth.ErrNotFound
+	}
+
+	if user.GroupID == nil {
+		return errors.New("user does not have a group")
+	}
+
+	strGroupID := strconv.FormatUint(*user.GroupID, 10)
+
+	group, err := s.groupRepository.GetGroupById(ctx, strGroupID)
+	if err != nil {
+		return err
+	}
+
+	if err = s.repository.DeleteSchedule(ctx, group.ID); err != nil {
+		return err
+	}
+
+	group.IsExistsSchedule = false
+	if err = s.groupRepository.UpdateGroup(ctx, group); err != nil {
 		return err
 	}
 
@@ -98,4 +172,13 @@ func (s *Service) ValidateSchedule(schedule UploadScheduleDTO) error {
 	}
 
 	return nil
+}
+
+func (s *Service) IsEvenWeek() bool {
+	_, week := time.Now().ISOWeek()
+	return week%2 == 0
+}
+
+func (s *Service) GetDayOfWeek() int {
+	return int(time.Now().Weekday())
 }

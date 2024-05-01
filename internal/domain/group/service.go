@@ -27,7 +27,7 @@ type UserRepository interface {
 type Repository interface {
 	CreateGroup(ctx context.Context, group Group) error
 	GetGroupByName(ctx context.Context, name string) (Group, error)
-	GetGroupById(ctx context.Context, name string) (Group, error)
+	GetGroupById(ctx context.Context, groupID string) (Group, error)
 	GetAllGroups(ctx context.Context) ([]Group, error)
 	UpdateGroup(ctx context.Context, group Group) error
 }
@@ -73,6 +73,36 @@ func (s *Service) JoinToGroup(ctx context.Context, groupId string, subId uint64,
 	}
 
 	if err = s.subRepository.UpdateSubscriber(ctx, sub); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *Service) LeaveFromGroup(ctx context.Context, groupId string, subId uint64) error {
+	group, err := s.repository.GetGroupById(ctx, groupId)
+	if err != nil {
+		return ErrNotFound
+	}
+
+	sub, err := s.subRepository.GetSubscriberById(ctx, subId)
+	if err != nil {
+		return subscriber.ErrNotFound
+	}
+
+	if sub.GroupId == nil || *sub.GroupId != group.ID {
+		return subscriber.ErrNotExistsGroup
+	}
+
+	sub.GroupId = nil
+
+	if err = s.subRepository.UpdateSubscriber(ctx, sub); err != nil {
+		return err
+	}
+
+	group.MembersCount--
+
+	if err = s.repository.UpdateGroup(ctx, group); err != nil {
 		return err
 	}
 
