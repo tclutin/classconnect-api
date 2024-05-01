@@ -5,6 +5,9 @@ import (
 	"classconnect-api/internal/domain"
 	"classconnect-api/internal/handler/http/v1"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+
 	"log/slog"
 	"net/http"
 )
@@ -19,6 +22,8 @@ func NewRouter(services *domain.Services, cfg *config.Config, logger *slog.Logge
 	} else {
 		gin.SetMode(gin.DebugMode)
 	}
+
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	router.GET("/health", func(c *gin.Context) {
 		c.Status(http.StatusOK)
