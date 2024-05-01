@@ -22,11 +22,16 @@ type tokenClaims struct {
 type Repository interface {
 	CreateUser(ctx context.Context, user User) error
 	GetUserByUsername(ctx context.Context, username string) (User, error)
+	GetUserByUsernameWithDetail(ctx context.Context, username string) (UserDetailDTO, error)
 }
 
 type Service struct {
 	config     *config.Config
 	repository Repository
+}
+
+func (s *Service) GetUserByUsernameWithDetail(ctx context.Context, username string) (UserDetailDTO, error) {
+	return s.repository.GetUserByUsernameWithDetail(ctx, username)
 }
 
 func NewService(config *config.Config, repository Repository) *Service {
@@ -88,8 +93,47 @@ func (s *Service) GetUserByUsername(ctx context.Context, username string) (User,
 	return user, nil
 }
 
+/*
+func (s *Service) GetUserDetail(ctx context.Context, username string) (UserDetailDTO, error) {
+	user, err := s.repository.GetUserByUsername(ctx, username)
+	if err != nil {
+		return UserDetailDTO{}, ErrNotFound
+	}
+
+	userDetail := UserDetailDTO{
+		ID:       user.ID,
+		Username: user.Username,
+		Email:    user.Email,
+		IsBanned: user.IsBanned,
+		Group:    nil,
+	}
+
+	if user.GroupID == nil {
+		return userDetail, nil
+	}
+
+	strGroupID := strconv.FormatUint(*user.GroupID, 10)
+
+	group, err := s.groupRepository.GetGroupById(ctx, strGroupID)
+	if err != nil {
+		return userDetail, nil
+	}
+
+	userGroup := &UserGroupDTO{
+		ID:               group.ID,
+		Name:             group.Name,
+		Code:             group.Code,
+		IsExistsSchedule: group.IsExistsSchedule,
+		MembersCount:     group.MembersCount,
+		CreatedAt:        group.CreatedAt,
+	}
+
+	userDetail.Group = userGroup
+
+	return userDetail, nil
+}*/
+
 func (s *Service) GenerateToken(username string, email string) (string, error) {
-	//TODO: возможно тут будут в будушем проблемы с парсингом
 	duration, err := time.ParseDuration(s.config.JWT.Expire)
 	if err != nil {
 		return "", errors.New("error of parsing duration")

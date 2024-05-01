@@ -31,6 +31,40 @@ func (u *UserRepository) CreateUser(ctx context.Context, user auth.User) error {
 	return err
 }
 
+// TODO: one day need to fix this cringe
+func (u *UserRepository) GetUserByUsernameWithDetail(ctx context.Context, username string) (auth.UserDetailDTO, error) {
+	sql := `SELECT u.id, u.username, u.email, u.is_banned, COALESCE(g.id, 0), COALESCE(g.name, ''),COALESCE(g.code, ''), COALESCE(g.is_exists_schedule, false), COALESCE(g.members_count, 0), COALESCE(g.created_at, NOW())
+			FROM public.users u
+			LEFT JOIN public.groups g ON u.group_id = g.id
+			WHERE u.username = $1`
+
+	var userDetail auth.UserDetailDTO
+	userDetail.Group = &auth.UserGroupDTO{}
+
+	row := u.db.QueryRow(ctx, sql, username)
+	err := row.Scan(
+		&userDetail.ID,
+		&userDetail.Username,
+		&userDetail.Email,
+		&userDetail.IsBanned,
+		&userDetail.Group.ID,
+		&userDetail.Group.Name,
+		&userDetail.Group.Code,
+		&userDetail.Group.IsExistsSchedule,
+		&userDetail.Group.MembersCount,
+		&userDetail.Group.CreatedAt,
+	)
+	if err != nil {
+		return auth.UserDetailDTO{}, err
+	}
+
+	if userDetail.Group.ID == 0 && userDetail.Group.Name == "" {
+		userDetail.Group = nil
+	}
+
+	return userDetail, nil
+}
+
 func (u *UserRepository) GetUserByUsername(ctx context.Context, username string) (auth.User, error) {
 	sql := `SELECT * FROM public.users WHERE username = $1`
 

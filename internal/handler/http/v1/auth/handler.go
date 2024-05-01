@@ -16,7 +16,7 @@ const (
 type Service interface {
 	LogIn(ctx context.Context, dto auth.LoginDTO) (string, error)
 	SignUp(ctx context.Context, dto auth.SignupDTO) (string, error)
-	GetUserByUsername(ctx context.Context, username string) (auth.User, error)
+	GetUserByUsernameWithDetail(ctx context.Context, username string) (auth.UserDetailDTO, error)
 }
 
 type Handler struct {
@@ -55,7 +55,7 @@ func (h *Handler) LogIn(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, Token{AccessToken: token})
+	c.JSON(http.StatusOK, TokenResponse{AccessToken: token})
 }
 
 func (h *Handler) SignUp(c *gin.Context) {
@@ -73,20 +73,20 @@ func (h *Handler) SignUp(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, Token{AccessToken: token})
+	c.JSON(http.StatusCreated, TokenResponse{AccessToken: token})
 }
 
 func (h *Handler) Me(c *gin.Context) {
-	value, exists := c.Get("username")
+	username, exists := c.Get("username")
 	if !exists {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "username not found in context"})
 		return
 	}
 
-	user, err := h.service.GetUserByUsername(context.Background(), value.(string))
+	userDetail, err := h.service.GetUserByUsernameWithDetail(context.Background(), username.(string))
 	if err != nil {
 		return
 	}
 
-	c.JSON(http.StatusOK, user)
+	c.JSON(http.StatusOK, ConvertUserDetailDTOToResponse(userDetail))
 }
