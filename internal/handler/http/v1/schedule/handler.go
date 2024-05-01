@@ -35,7 +35,7 @@ func NewHandler(service Service, logger *slog.Logger) *Handler {
 func (h *Handler) InitAPI(router *gin.RouterGroup, auth *auth.Service) {
 	scheduleGroup := router.Group("/schedules", middleware.AuthMiddleware(auth))
 	{
-		scheduleGroup.POST("/upload", h.UploadSchedule)
+		scheduleGroup.POST("", h.UploadSchedule)
 		scheduleGroup.GET("", h.GetScheduleForDay)
 		scheduleGroup.DELETE("", h.DeleteSchedule)
 	}

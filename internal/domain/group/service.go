@@ -200,6 +200,10 @@ func (s *Service) GetAllGroups(ctx context.Context) ([]Group, error) {
 	return groups, nil
 }
 
+func (s *Service) GetGroupById(ctx context.Context, groupID string) (Group, error) {
+	return s.repository.GetGroupById(ctx, groupID)
+}
+
 func (s *Service) GenerateName(size int64) string {
 	chars := []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789")
 	alias := make([]rune, size)
