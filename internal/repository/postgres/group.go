@@ -4,6 +4,7 @@ import (
 	"classconnect-api/internal/domain/group"
 	"classconnect-api/pkg/client/postgresql"
 	"context"
+	"github.com/jackc/pgx/v5"
 	"log/slog"
 )
 
@@ -112,6 +113,52 @@ func (g *GroupRepository) UpdateGroup(ctx context.Context, group group.Group) er
                          members_count = $4 WHERE id = $5`
 
 	_, err := g.db.Exec(ctx, sql, group.Name, group.Code, group.IsExistsSchedule, group.MembersCount, group.ID)
+
+	return err
+}
+
+// DeleteGroup with transactions
+func (g *GroupRepository) DeleteGroup(ctx context.Context, groupID uint64) error {
+	tx, err := g.db.Begin(ctx)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback(ctx)
+
+	if err = g.untieSubscribers(ctx, tx, groupID); err != nil {
+		return err
+	}
+
+	if err = g.untieUser(ctx, tx, groupID); err != nil {
+		return err
+	}
+
+	sql := `DELETE FROM public.groups WHERE id = $1`
+
+	_, err = tx.Exec(ctx, sql, groupID)
+	if err != nil {
+		return err
+	}
+
+	if err = tx.Commit(ctx); err != nil {
+		return err
+	}
+
+	return err
+}
+
+func (g *GroupRepository) untieSubscribers(ctx context.Context, tx pgx.Tx, groupID uint64) error {
+	sql := `UPDATE public.subscribers SET group_id = NULL WHERE group_id = $1`
+
+	_, err := tx.Exec(ctx, sql, groupID)
+
+	return err
+}
+
+func (g *GroupRepository) untieUser(ctx context.Context, tx pgx.Tx, groupID uint64) error {
+	sql := `UPDATE public.users SET group_id = NULL WHERE group_id = $1`
+
+	_, err := tx.Exec(ctx, sql, groupID)
 
 	return err
 }

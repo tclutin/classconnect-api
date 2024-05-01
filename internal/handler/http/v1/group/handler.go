@@ -19,6 +19,7 @@ type Service interface {
 	GetAllGroups(ctx context.Context) ([]group.Group, error)
 	JoinToGroup(ctx context.Context, groupId string, subId uint64, code string) error
 	LeaveFromGroup(ctx context.Context, groupId string, subId uint64) error
+	DeleteGroup(ctx context.Context, groupId string) error
 }
 
 type Handler struct {
@@ -38,6 +39,7 @@ func (h *Handler) InitAPI(router *gin.RouterGroup, auth *auth.Service) {
 	{
 		groupGroup.POST("", h.CreateGroup)
 		groupGroup.GET("", h.GetAllGroups)
+		groupGroup.DELETE("", h.DeleteGroup)
 		groupGroup.POST("/:groupID/join", h.JoinToGroup)
 		groupGroup.POST("/:groupID/leave", h.LeaveFromGroup)
 	}
@@ -107,6 +109,21 @@ func (h *Handler) LeaveFromGroup(c *gin.Context) {
 	groupId := c.Param("groupID")
 
 	if err := h.service.LeaveFromGroup(c.Request.Context(), groupId, request.ID); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"status": "Successfully"})
+}
+
+func (h *Handler) DeleteGroup(c *gin.Context) {
+	username, exists := c.Get("username")
+	if !exists {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "username not found in context"})
+		return
+	}
+
+	if err := h.service.DeleteGroup(c.Request.Context(), username.(string)); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}

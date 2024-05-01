@@ -6,6 +6,7 @@ import (
 	"classconnect-api/pkg/hash"
 	"context"
 	"errors"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -13,6 +14,10 @@ import (
 const (
 	layerGroupService = "service.group."
 )
+
+type ScheduleRepository interface {
+	DeleteSchedule(ctx context.Context, groupID uint64) error
+}
 
 type SubscriberRepository interface {
 	GetSubscriberById(ctx context.Context, id uint64) (subscriber.Subscriber, error)
@@ -30,19 +35,28 @@ type Repository interface {
 	GetGroupById(ctx context.Context, groupID string) (Group, error)
 	GetAllGroups(ctx context.Context) ([]Group, error)
 	UpdateGroup(ctx context.Context, group Group) error
+	DeleteGroup(ctx context.Context, groupID uint64) error
 }
 
 type Service struct {
-	repository     Repository
-	userRepository UserRepository
-	subRepository  SubscriberRepository
+	repository         Repository
+	userRepository     UserRepository
+	subRepository      SubscriberRepository
+	scheduleRepository ScheduleRepository
 }
 
-func NewService(repository Repository, userRepository UserRepository, subRepostitory SubscriberRepository) *Service {
+func NewService(
+	repository Repository,
+	userRepository UserRepository,
+	subRepostitory SubscriberRepository,
+	scheduleRepository ScheduleRepository,
+) *Service {
+
 	return &Service{
-		repository:     repository,
-		userRepository: userRepository,
-		subRepository:  subRepostitory,
+		repository:         repository,
+		userRepository:     userRepository,
+		subRepository:      subRepostitory,
+		scheduleRepository: scheduleRepository,
 	}
 }
 
@@ -145,6 +159,36 @@ func (s *Service) CreateGroup(ctx context.Context, username string, name string)
 	}
 
 	return group, nil
+}
+
+func (s *Service) DeleteGroup(ctx context.Context, username string) error {
+	user, err := s.userRepository.GetUserByUsername(ctx, username)
+	if err != nil {
+		return auth.ErrNotFound
+	}
+
+	if user.GroupID == nil {
+		return errors.New("you do not have group")
+	}
+
+	strGroupID := strconv.FormatUint(*user.GroupID, 10)
+
+	group, err := s.repository.GetGroupById(ctx, strGroupID)
+	if err != nil {
+		return ErrNotFound
+	}
+
+	if group.IsExistsSchedule {
+		if err = s.scheduleRepository.DeleteSchedule(ctx, group.ID); err != nil {
+			return err
+		}
+	}
+
+	if err = s.repository.DeleteGroup(ctx, group.ID); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *Service) GetAllGroups(ctx context.Context) ([]Group, error) {
