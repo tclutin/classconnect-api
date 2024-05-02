@@ -1,7 +1,6 @@
 package main
 
 import (
-	_ "classconnect-api/docs"
 	"classconnect-api/internal/app"
 	"context"
 )
