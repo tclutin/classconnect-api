@@ -23,6 +23,7 @@ func NewRouter(services *domain.Services, cfg *config.Config, logger *slog.Logge
 		gin.SetMode(gin.DebugMode)
 	}
 
+	//TODO: one day add a swagger
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	router.GET("/health", func(c *gin.Context) {
