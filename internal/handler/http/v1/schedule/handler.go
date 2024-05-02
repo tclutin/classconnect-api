@@ -4,6 +4,7 @@ import (
 	"classconnect-api/internal/domain/auth"
 	"classconnect-api/internal/domain/schedule"
 	"classconnect-api/internal/handler/http/middleware"
+	resp "classconnect-api/pkg/http"
 	"context"
 	"github.com/gin-gonic/gin"
 	"log/slog"
@@ -44,35 +45,35 @@ func (h *Handler) InitAPI(router *gin.RouterGroup, auth *auth.Service) {
 func (h *Handler) UploadSchedule(c *gin.Context) {
 	var request UploadScheduleRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, resp.NewAPIErrorResponse(err.Error()))
 		return
 	}
 
 	username, exists := c.Get("username")
 	if !exists {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "username not found in context"})
+		c.JSON(http.StatusBadRequest, resp.NewAPIErrorResponse("username not found in context"))
 		return
 	}
 
-	err := h.service.UploadSchedule(context.Background(), request.ToDTO(), username.(string))
+	err := h.service.UploadSchedule(c.Request.Context(), request.ToDTO(), username.(string))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, resp.NewAPIErrorResponse(err.Error()))
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"status": "Successfully"})
+	c.JSON(http.StatusOK, resp.NewAPIResponse("Successfully"))
 }
 
 func (h *Handler) GetScheduleForDay(c *gin.Context) {
 	var request GetScheduleForDayRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, resp.NewAPIErrorResponse(err.Error()))
 		return
 	}
 
 	schedule, err := h.service.GetScheduleForDay(c.Request.Context(), request.ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, resp.NewAPIErrorResponse(err.Error()))
 		return
 	}
 
@@ -82,14 +83,14 @@ func (h *Handler) GetScheduleForDay(c *gin.Context) {
 func (h *Handler) DeleteSchedule(c *gin.Context) {
 	username, exists := c.Get("username")
 	if !exists {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "username not found in context"})
+		c.JSON(http.StatusBadRequest, resp.NewAPIErrorResponse("username not found in context"))
 		return
 	}
 
 	if err := h.service.DeleteSchedule(c.Request.Context(), username.(string)); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, resp.NewAPIErrorResponse(err.Error()))
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"status": "Successfully"})
+	c.JSON(http.StatusOK, resp.NewAPIResponse("Successfully"))
 }

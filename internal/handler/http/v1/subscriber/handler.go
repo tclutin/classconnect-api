@@ -4,8 +4,8 @@ import (
 	"classconnect-api/internal/domain/auth"
 	"classconnect-api/internal/domain/subscriber"
 	"classconnect-api/internal/handler/http/middleware"
+	resp "classconnect-api/pkg/http"
 	"context"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"log/slog"
 	"net/http"
@@ -50,69 +50,67 @@ func (h *Handler) InitAPI(router *gin.RouterGroup, auth *auth.Service) {
 func (h *Handler) CreateTelegramSubscriber(c *gin.Context) {
 	var request CreateTelegramSubscriberRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, resp.NewAPIErrorResponse(err.Error()))
 		return
 	}
 
-	err := h.service.CreateTelegramSubscriber(context.Background(), request.ChatId)
+	err := h.service.CreateTelegramSubscriber(c.Request.Context(), request.ChatId)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, resp.NewAPIErrorResponse(err.Error()))
 		return
 	}
 
-	fmt.Println(request.ChatId)
-
-	c.JSON(http.StatusCreated, gin.H{"status": "Successfully"})
+	c.JSON(http.StatusCreated, resp.NewAPIResponse("Successfully"))
 }
 
 func (h *Handler) CreateDeviceSubscriber(c *gin.Context) {
 	var request CreateDeviceSubscriberRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, resp.NewAPIErrorResponse(err.Error()))
 		return
 	}
 
-	err := h.service.CreateDeviceSubscriber(context.Background(), request.DeviceId)
+	err := h.service.CreateDeviceSubscriber(c.Request.Context(), request.DeviceId)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, resp.NewAPIErrorResponse(err.Error()))
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"status": "Successfully"})
+	c.JSON(http.StatusCreated, resp.NewAPIResponse("Successfully"))
 }
 
 func (h *Handler) EnableNotification(c *gin.Context) {
 	var request EnableNotificationSubscriberRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, resp.NewAPIErrorResponse(err.Error()))
 		return
 	}
 
 	id, err := strconv.Atoi(c.Param("subscriberId"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, resp.NewAPIErrorResponse(err.Error()))
 		return
 	}
 
-	err = h.service.EnableNotificationSubscriber(context.Background(), uint64(id), request.Notification)
+	err = h.service.EnableNotificationSubscriber(c.Request.Context(), uint64(id), request.Notification)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, resp.NewAPIErrorResponse(err.Error()))
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"status": "Successfully"})
+	c.JSON(http.StatusOK, resp.NewAPIResponse("Successfully"))
 }
 
 func (h *Handler) GetSubscriberByDeviceId(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("deviceId"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, resp.NewAPIErrorResponse(err.Error()))
 		return
 	}
 
-	sub, err := h.service.GetSubscriberByDeviceId(context.Background(), uint64(id))
+	sub, err := h.service.GetSubscriberByDeviceId(c.Request.Context(), uint64(id))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, resp.NewAPIResponse("Successfully"))
 		return
 	}
 
@@ -122,13 +120,13 @@ func (h *Handler) GetSubscriberByDeviceId(c *gin.Context) {
 func (h *Handler) GetSubscriberChatId(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("chatId"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, resp.NewAPIErrorResponse(err.Error()))
 		return
 	}
 
-	sub, err := h.service.GetSubscriberByChatId(context.Background(), uint64(id))
+	sub, err := h.service.GetSubscriberByChatId(c.Request.Context(), uint64(id))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, resp.NewAPIErrorResponse(err.Error()))
 		return
 	}
 

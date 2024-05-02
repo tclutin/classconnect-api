@@ -1,9 +1,17 @@
 package http
 
 type APIErrorResponse struct {
-	Error any `json:"message"`
+	Error string `json:"error"`
 }
 
-func NewAPIResponse(message any) APIErrorResponse {
+type APIResponse struct {
+	Message string `json:"message"`
+}
+
+func NewAPIErrorResponse(message string) APIErrorResponse {
 	return APIErrorResponse{Error: message}
+}
+
+func NewAPIResponse(message string) APIResponse {
+	return APIResponse{Message: message}
 }
