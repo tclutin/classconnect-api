@@ -96,7 +96,7 @@ docker exec <name of container with app> goose -dir ./migrations postgres "postg
     }
   }
 
-### [subscribers] Регистрация подписчиков с телеграма 
+### [subscribers] Регистрация подписчика с телеграма 
 
 - **URL:** `/api/v1/subscribers/telegram`
 - **Метод:** `POST`
@@ -116,7 +116,7 @@ docker exec <name of container with app> goose -dir ./migrations postgres "postg
     "message": "Successfully"
   }
 
-### [subscribers] Регистрация подписчиков с девайсов
+### [subscribers] Регистрация подписчика с девайсов
 
 - **URL:** `/api/v1/subscribers/device`
 - **Метод:** `POST`
