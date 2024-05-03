@@ -383,7 +383,7 @@ docker exec <name of container with app> goose -dir ./migrations postgres "postg
     "message": "Successfully"
   }
 
-### [schedules] Получение расписания на сегодня
+### [schedules] Получение расписания на день
 
 - **URL:** `/api/v1/schedules`
 - **Метод:** `GET`
