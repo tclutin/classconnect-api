@@ -15,6 +15,7 @@ type Config struct {
 	Environment string `env:"ENV"`
 	HTTPServer  HTTPServer
 	Postgres    Postgres
+	JWT         JWT
 }
 
 type HTTPServer struct {
@@ -28,6 +29,11 @@ type Postgres struct {
 	DbName   string `env:"POSTGRES_DB"`
 	User     string `env:"POSTGRES_USER"`
 	Password string `env:"POSTGRES_PASSWORD"`
+}
+
+type JWT struct {
+	Secret string `env:"JWT_SECRET"`
+	Expire string `env:"JWT_EXPIRE"`
 }
 
 func MustLoad() *Config {

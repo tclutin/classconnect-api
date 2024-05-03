@@ -1,11 +1,15 @@
 package app
 
 import (
-	"classconnect-api/internal/config"
-	httpLayer "classconnect-api/internal/handler/http"
-	"classconnect-api/pkg/logging"
 	"context"
 	"errors"
+	"fmt"
+	"github.com/tclutin/classconnect-api/internal/config"
+	"github.com/tclutin/classconnect-api/internal/domain"
+	httpLayer "github.com/tclutin/classconnect-api/internal/handler/http"
+	"github.com/tclutin/classconnect-api/internal/repository/postgres"
+	"github.com/tclutin/classconnect-api/pkg/client/postgresql"
+	"github.com/tclutin/classconnect-api/pkg/logging"
 	"log/slog"
 	"net"
 	"net/http"
@@ -26,8 +30,24 @@ func New() *App {
 	//Init the slog
 	logger := logging.InitSlog(cfg.Environment)
 
+	connectStr := fmt.Sprintf("postgresql://%v:%v@%v:%v/%v",
+		cfg.Postgres.User,
+		cfg.Postgres.Password,
+		cfg.Postgres.Host,
+		cfg.Postgres.Port,
+		cfg.Postgres.DbName)
+
+	//Init postgres client
+	client := postgresql.NewClient(context.Background(), connectStr)
+
+	//Init repositories
+	repositories := postgres.NewRepositories(client, logger)
+
+	//Init manager of serviсes
+	services := domain.NewServices(cfg, repositories)
+
 	//Init the router
-	router := httpLayer.NewRouter(cfg, logger)
+	router := httpLayer.NewRouter(services, cfg, logger)
 
 	return &App{
 		logger: logger,
@@ -42,7 +62,6 @@ func (a *App) Run(ctx context.Context) {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
 
-	//TODO: print logging about start the server
 	go func() {
 		err := a.httpServer.ListenAndServe()
 		if err != nil && !errors.Is(err, http.ErrServerClosed) {
