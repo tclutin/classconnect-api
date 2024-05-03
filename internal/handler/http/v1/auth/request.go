@@ -1,6 +1,6 @@
 package auth
 
-import "classconnect-api/internal/domain/auth"
+import "github.com/tclutin/classconnect-api/internal/domain/auth"
 
 type LoginRequest struct {
 	Username string `json:"username" binding:"required,min=4,max=20"`

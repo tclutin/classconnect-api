@@ -1,15 +1,15 @@
 package app
 
 import (
-	"classconnect-api/internal/config"
-	"classconnect-api/internal/domain"
-	httpLayer "classconnect-api/internal/handler/http"
-	"classconnect-api/internal/repository/postgres"
-	"classconnect-api/pkg/client/postgresql"
-	"classconnect-api/pkg/logging"
 	"context"
 	"errors"
 	"fmt"
+	"github.com/tclutin/classconnect-api/internal/config"
+	"github.com/tclutin/classconnect-api/internal/domain"
+	httpLayer "github.com/tclutin/classconnect-api/internal/handler/http"
+	"github.com/tclutin/classconnect-api/internal/repository/postgres"
+	"github.com/tclutin/classconnect-api/pkg/client/postgresql"
+	"github.com/tclutin/classconnect-api/pkg/logging"
 	"log/slog"
 	"net"
 	"net/http"

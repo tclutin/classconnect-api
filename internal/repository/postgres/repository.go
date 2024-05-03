@@ -1,7 +1,7 @@
 package postgres
 
 import (
-	"classconnect-api/pkg/client/postgresql"
+	"github.com/tclutin/classconnect-api/pkg/client/postgresql"
 	"log/slog"
 )
 

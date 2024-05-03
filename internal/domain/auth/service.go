@@ -1,11 +1,11 @@
 package auth
 
 import (
-	"classconnect-api/internal/config"
-	"classconnect-api/pkg/hash"
 	"context"
 	"errors"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/tclutin/classconnect-api/internal/config"
+	"github.com/tclutin/classconnect-api/pkg/hash"
 	"time"
 )
 

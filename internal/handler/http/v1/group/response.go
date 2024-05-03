@@ -1,7 +1,7 @@
 package group
 
 import (
-	"classconnect-api/internal/domain/group"
+	"github.com/tclutin/classconnect-api/internal/domain/group"
 	"time"
 )
 

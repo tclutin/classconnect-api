@@ -1,12 +1,12 @@
 package http
 
 import (
-	"classconnect-api/internal/config"
-	"classconnect-api/internal/domain"
-	"classconnect-api/internal/handler/http/v1"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	"github.com/tclutin/classconnect-api/internal/config"
+	"github.com/tclutin/classconnect-api/internal/domain"
+	"github.com/tclutin/classconnect-api/internal/handler/http/v1"
 
 	"log/slog"
 	"net/http"

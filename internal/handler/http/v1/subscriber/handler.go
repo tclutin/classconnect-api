@@ -1,12 +1,12 @@
 package subscriber
 
 import (
-	"classconnect-api/internal/domain/auth"
-	"classconnect-api/internal/domain/subscriber"
-	"classconnect-api/internal/handler/http/middleware"
-	resp "classconnect-api/pkg/http"
 	"context"
 	"github.com/gin-gonic/gin"
+	"github.com/tclutin/classconnect-api/internal/domain/auth"
+	"github.com/tclutin/classconnect-api/internal/domain/subscriber"
+	"github.com/tclutin/classconnect-api/internal/handler/http/middleware"
+	resp "github.com/tclutin/classconnect-api/pkg/http"
 	"log/slog"
 	"net/http"
 	"strconv"

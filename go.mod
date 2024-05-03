@@ -1,4 +1,4 @@
-module classconnect-api
+module github.com/tclutin/classconnect-api
 
 go 1.22
 

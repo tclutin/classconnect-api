@@ -1,9 +1,9 @@
 package postgres
 
 import (
-	"classconnect-api/internal/domain/auth"
-	"classconnect-api/pkg/client/postgresql"
 	"context"
+	"github.com/tclutin/classconnect-api/internal/domain/auth"
+	"github.com/tclutin/classconnect-api/pkg/client/postgresql"
 	"log/slog"
 )
 

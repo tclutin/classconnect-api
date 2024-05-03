@@ -1,10 +1,10 @@
 package postgres
 
 import (
-	"classconnect-api/internal/domain/schedule"
-	"classconnect-api/pkg/client/postgresql"
 	"context"
 	"github.com/jackc/pgx/v5"
+	"github.com/tclutin/classconnect-api/internal/domain/schedule"
+	"github.com/tclutin/classconnect-api/pkg/client/postgresql"
 	"log/slog"
 	"time"
 )

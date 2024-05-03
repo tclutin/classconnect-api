@@ -1,9 +1,9 @@
 package middleware
 
 import (
-	"classconnect-api/internal/domain/auth"
-	resp "classconnect-api/pkg/http"
 	"github.com/gin-gonic/gin"
+	"github.com/tclutin/classconnect-api/internal/domain/auth"
+	resp "github.com/tclutin/classconnect-api/pkg/http"
 	"net/http"
 	"strings"
 )

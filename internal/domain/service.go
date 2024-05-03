@@ -1,12 +1,12 @@
 package domain
 
 import (
-	"classconnect-api/internal/config"
-	"classconnect-api/internal/domain/auth"
-	"classconnect-api/internal/domain/group"
-	"classconnect-api/internal/domain/schedule"
-	"classconnect-api/internal/domain/subscriber"
-	"classconnect-api/internal/repository/postgres"
+	"github.com/tclutin/classconnect-api/internal/config"
+	"github.com/tclutin/classconnect-api/internal/domain/auth"
+	"github.com/tclutin/classconnect-api/internal/domain/group"
+	"github.com/tclutin/classconnect-api/internal/domain/schedule"
+	"github.com/tclutin/classconnect-api/internal/domain/subscriber"
+	"github.com/tclutin/classconnect-api/internal/repository/postgres"
 )
 
 type Services struct {

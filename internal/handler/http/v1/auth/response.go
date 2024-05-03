@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"classconnect-api/internal/domain/auth"
+	"github.com/tclutin/classconnect-api/internal/domain/auth"
 	"time"
 )
 

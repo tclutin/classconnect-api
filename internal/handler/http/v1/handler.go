@@ -1,12 +1,12 @@
 package v1
 
 import (
-	"classconnect-api/internal/domain"
-	"classconnect-api/internal/handler/http/v1/auth"
-	"classconnect-api/internal/handler/http/v1/group"
-	"classconnect-api/internal/handler/http/v1/schedule"
-	"classconnect-api/internal/handler/http/v1/subscriber"
 	"github.com/gin-gonic/gin"
+	"github.com/tclutin/classconnect-api/internal/domain"
+	"github.com/tclutin/classconnect-api/internal/handler/http/v1/auth"
+	"github.com/tclutin/classconnect-api/internal/handler/http/v1/group"
+	"github.com/tclutin/classconnect-api/internal/handler/http/v1/schedule"
+	"github.com/tclutin/classconnect-api/internal/handler/http/v1/subscriber"
 	"log/slog"
 )
 

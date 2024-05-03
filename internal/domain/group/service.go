@@ -1,11 +1,11 @@
 package group
 
 import (
-	"classconnect-api/internal/domain/auth"
-	"classconnect-api/internal/domain/subscriber"
-	"classconnect-api/pkg/hash"
 	"context"
 	"errors"
+	"github.com/tclutin/classconnect-api/internal/domain/auth"
+	"github.com/tclutin/classconnect-api/internal/domain/subscriber"
+	"github.com/tclutin/classconnect-api/pkg/hash"
 	"strconv"
 	"strings"
 	"time"

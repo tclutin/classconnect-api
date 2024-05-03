@@ -1,6 +1,6 @@
 package schedule
 
-import "classconnect-api/internal/domain/schedule"
+import "github.com/tclutin/classconnect-api/internal/domain/schedule"
 
 type GetScheduleForDayRequest struct {
 	ID uint64 `json:"sub_id" binding:"required"`

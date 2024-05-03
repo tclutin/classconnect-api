@@ -1,8 +1,8 @@
 package main
 
 import (
-	"classconnect-api/internal/app"
 	"context"
+	"github.com/tclutin/classconnect-api/internal/app"
 )
 
 //	@title			classconnect-api

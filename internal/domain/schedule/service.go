@@ -1,11 +1,11 @@
 package schedule
 
 import (
-	"classconnect-api/internal/domain/auth"
-	"classconnect-api/internal/domain/group"
-	"classconnect-api/internal/domain/subscriber"
 	"context"
 	"errors"
+	"github.com/tclutin/classconnect-api/internal/domain/auth"
+	"github.com/tclutin/classconnect-api/internal/domain/group"
+	"github.com/tclutin/classconnect-api/internal/domain/subscriber"
 	"strconv"
 	"time"
 )
