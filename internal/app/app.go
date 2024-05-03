@@ -9,6 +9,7 @@ import (
 	"classconnect-api/pkg/logging"
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
 	"net"
 	"net/http"
@@ -29,8 +30,15 @@ func New() *App {
 	//Init the slog
 	logger := logging.InitSlog(cfg.Environment)
 
+	connectStr := fmt.Sprintf("postgresql://%v:%v@%v:%v/%v",
+		cfg.Postgres.User,
+		cfg.Postgres.Password,
+		cfg.Postgres.Host,
+		cfg.Postgres.Port,
+		cfg.Postgres.DbName)
+
 	//Init postgres client
-	client := postgresql.NewClient(context.Background(), "postgresql://postgres:root@localhost:5432/postgres")
+	client := postgresql.NewClient(context.Background(), connectStr)
 
 	//Init repositories
 	repositories := postgres.NewRepositories(client, logger)

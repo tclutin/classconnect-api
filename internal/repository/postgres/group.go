@@ -156,7 +156,7 @@ func (g *GroupRepository) untieSubscribers(ctx context.Context, tx pgx.Tx, group
 }
 
 func (g *GroupRepository) untieUser(ctx context.Context, tx pgx.Tx, groupID uint64) error {
-	sql := `UPDATE public.users SET group_id = NULL WHERE group_id = $1`
+	sql := `UPDATE public.users	 SET group_id = NULL WHERE group_id = $1`
 
 	_, err := tx.Exec(ctx, sql, groupID)
 
