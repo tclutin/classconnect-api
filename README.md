@@ -12,7 +12,7 @@ cd classconnect-api
 ```bash
 docker-compose up
 ```
-4. Затем подключитесь к контейнеру и выполните миграцию
+4. Затем подключитесь к контейнеру c приложением и выполните миграцию
 ```bash
 docker exec <name of container with app> goose -dir ./migrations postgres "postgresql://postgres:postgres@db:5432/classconnect-api" up
 ```
