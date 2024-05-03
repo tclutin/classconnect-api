@@ -22,7 +22,7 @@ docker exec <name of container with app> goose -dir ./migrations postgres "postg
 5. По умолчанию сервис будет доступен по адресу [http://localhost:8080](http://localhost:8080).
 
 ## Использование API
-### Регистрация пользователя
+### [auth] Регистрация пользователя
 
 - **URL:** `/api/v1/auth/signup`
 - **Метод:** `POST`
@@ -43,7 +43,7 @@ docker exec <name of container with app> goose -dir ./migrations postgres "postg
     "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
   }
 
-### Аутентификация пользователя
+### [auth] Аутентификация пользователя
 
 - **URL:** `/api/v1/auth/login`
 - **Метод:** `POST`
@@ -63,7 +63,7 @@ docker exec <name of container with app> goose -dir ./migrations postgres "postg
     "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
   }
 
-### Получение информации о пользователе
+### [auth] Получение информации о пользователе
 
 - **URL:** `/api/v1/auth/me`
 - **Метод:** `GET`
@@ -98,7 +98,7 @@ docker exec <name of container with app> goose -dir ./migrations postgres "postg
     }
   }
 
-### Регистрация подписчиков с телеграма 
+### [subscribers] Регистрация подписчиков с телеграма 
 
 - **URL:** `/api/v1/subscribers/telegram`
 - **Метод:** `POST`
@@ -118,7 +118,7 @@ docker exec <name of container with app> goose -dir ./migrations postgres "postg
     "message": "Successfully"
   }
 
-### Регистрация подписчиков с девайсов
+### [subscribers] Регистрация подписчиков с девайсов
 
 - **URL:** `/api/v1/subscribers/device`
 - **Метод:** `POST`
@@ -138,7 +138,7 @@ docker exec <name of container with app> goose -dir ./migrations postgres "postg
     "message": "Successfully"
   }
 
-### Получение информации о подписчике с девайса
+### [subscribers] Получение подписчика с девайса
 
 - **URL:** `/api/v1/subscribers/device/:deviceID`
 - **Метод:** `GET`
@@ -157,7 +157,7 @@ docker exec <name of container with app> goose -dir ./migrations postgres "postg
     "notification_enabled": false
   }
 
-### Получение информации о подписчике с телеграма
+### [subscribers] Получение подписчика с телеграма
 
 - **URL:** `/api/v1/subscribers/telegram/:chatID`
 - **Метод:** `GET`
@@ -177,7 +177,7 @@ docker exec <name of container with app> goose -dir ./migrations postgres "postg
   }
 
 
-### Включение уведомлений у подписчика
+### [subscribers] Включение уведомлений у подписчика
 
 - **URL:** `/api/v1/subscribers/:subID`
 - **Метод:** `PATCH`
@@ -198,7 +198,7 @@ docker exec <name of container with app> goose -dir ./migrations postgres "postg
   }
 
 
-### Создание группы
+### [groups] Создание группы
 
 - **URL:** `/api/v1/groups`
 - **Метод:** `POST`
@@ -223,7 +223,7 @@ docker exec <name of container with app> goose -dir ./migrations postgres "postg
     "CreatedAt": "2024-05-03T20:27:07.889702Z"
   }
 
-### Удаление группы
+### [groups] Удаление группы
 
 - **URL:** `/api/v1/groups`
 - **Метод:** `DELETE`
@@ -238,7 +238,7 @@ docker exec <name of container with app> goose -dir ./migrations postgres "postg
     "message": "Successfully"
   }
 
-### Получение всех групп
+### [groups] Получение всех групп
 
 - **URL:** `/api/v1/groups`
 - **Метод:** `GET`
@@ -258,7 +258,7 @@ docker exec <name of container with app> goose -dir ./migrations postgres "postg
     "CreatedAt": "2024-05-03T20:27:07.889702Z"
   }]
 
-### Получение группы по ID
+### [groups] Получение группы по ID
 
 - **URL:** `/api/v1/groups/:groupID`
 - **Метод:** `GET`
@@ -278,7 +278,7 @@ docker exec <name of container with app> goose -dir ./migrations postgres "postg
     "CreatedAt": "2024-05-03T20:27:07.889702Z"
   }
 
-### Вступление в группу
+### [groups] Вступление в группу
 
 - **URL:** `/api/v1/groups/:groupID/join`
 - **Метод:** `POST`
@@ -299,7 +299,7 @@ docker exec <name of container with app> goose -dir ./migrations postgres "postg
     "message": "Successfully"
   }
 
-### Выход из группы
+### [groups] Выход из группы
 
 - **URL:** `/api/v1/groups/:groupID/leave`
 - **Метод:** `POST`
@@ -319,7 +319,7 @@ docker exec <name of container with app> goose -dir ./migrations postgres "postg
     "message": "Successfully"
   }
 
-### Загрузка расписания в группы
+### [schedules] Загрузка расписания
 
 - **URL:** `/api/v1/schedules`
 - **Метод:** `POST`
@@ -371,3 +371,43 @@ docker exec <name of container with app> goose -dir ./migrations postgres "postg
   {
     "message": "Successfully"
   }
+
+### [schedules] Удаление расписания
+
+- **URL:** `/api/v1/schedules`
+- **Метод:** `DELETE`
+- **Коды ответов:**
+  - `200 Success` - успех
+  - `400 Bad Request` - неверный формат запроса
+  - `401 Unauthorized` - требуется аутентификация
+  - `500 Internal Server Error` - ошибка сервера
+- **Тело ответа:**
+  ```json
+  {
+    "message": "Successfully"
+  }
+
+### [schedules] Получение расписания на сегодня
+
+- **URL:** `/api/v1/schedules`
+- **Метод:** `GET`
+- **Коды ответов:**
+  - `200 Success` - успех
+  - `400 Bad Request` - неверный формат запроса
+  - `401 Unauthorized` - требуется аутентификация
+  - `500 Internal Server Error` - ошибка сервера
+- **Тело запроса:**
+  ```json
+  {
+    "sub_id": 1,
+  }
+- **Тело ответа:**
+  ```json
+    [{
+        "Name": "Operating systems",
+        "Cabinet": "132A",
+        "Teacher": "...",
+        "Description": "There may be a description here",
+        "StartTime": "09:40",
+        "EndTime": "11:10"
+    }]
