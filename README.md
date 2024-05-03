@@ -248,11 +248,11 @@ docker exec <name of container with app> goose -dir ./migrations postgres "postg
 - **Тело ответа:**
   ```json
   [{
-    "ID": 1,
-    "Name": "name_group",
-    "IsExistsSchedule": false,
-    "MembersCount": 1,
-    "CreatedAt": "2024-05-03T20:27:07.889702Z"
+    "id": 1,
+    "name": "name_group",
+    "is_exists_schedule": false,
+    "members_count": 1,
+    "created_at": "2024-05-03T20:27:07.889702Z"
   }]
 
 ### [groups] Получение группы по ID
@@ -267,11 +267,11 @@ docker exec <name of container with app> goose -dir ./migrations postgres "postg
 - **Тело ответа:**
   ```json
   {
-    "ID": 1,
-    "Name": "name_group",
-    "IsExistsSchedule": false,
-    "MembersCount": 1,
-    "CreatedAt": "2024-05-03T20:27:07.889702Z"
+    "id": 3,
+    "name": "йцу",
+    "is_exists_schedule": true,
+    "members_count": 2,
+    "created_at": "2024-05-03T20:29:24.709429Z"
   }
 
 ### [groups] Вступление в группу
