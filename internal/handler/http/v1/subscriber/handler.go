@@ -114,7 +114,7 @@ func (h *Handler) GetSubscriberByDeviceId(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, sub)
+	c.JSON(http.StatusOK, ConvertSubscriberEntityToResponse(sub))
 }
 
 func (h *Handler) GetSubscriberChatId(c *gin.Context) {
@@ -130,5 +130,5 @@ func (h *Handler) GetSubscriberChatId(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, sub)
+	c.JSON(http.StatusOK, ConvertSubscriberEntityToResponse(sub))
 }
