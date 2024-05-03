@@ -250,7 +250,6 @@ docker exec <name of container with app> goose -dir ./migrations postgres "postg
   [{
     "ID": 1,
     "Name": "name_group",
-    "Code": "ZPlz",
     "IsExistsSchedule": false,
     "MembersCount": 1,
     "CreatedAt": "2024-05-03T20:27:07.889702Z"
