@@ -1,6 +1,6 @@
 # сlassconnect-api
 
-№№ Описание
+## Описание
 
 Основное API для [ClassConnect](https://github.com/tclutin/classconnect).
 
