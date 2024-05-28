@@ -1,5 +1,9 @@
 # сlassconnect-api
 
+№№ Описание
+
+Основное API для [ClassConnect](https://github.com/tclutin/classconnect).
+
 ## Установка
 
 1. Склонируйте репозиторий
