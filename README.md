@@ -1,7 +1,8 @@
 # сlassconnect-api
 
 ## Описание
-Основное API для [ClassConnect](https://github.com/tclutin/classconnect).
+Основное API для [ClassConnect](https://github.com/tclutin/classconnect)
+
 ClassConnect позволяет создавать группы, загружать расписания группам, рассылать уведомления о скороv старте занятий, а также позволяет удобно узнавать расписание группы.
 
 ## Установка
